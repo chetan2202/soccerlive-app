@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#0b1410"/>
+  <!-- Goal frame and net -->
+  <g stroke="#eef3ea" fill="none">
+    <path d="M96 330 V170 H416 V330" stroke-width="16" stroke-linejoin="round"/>
+    <g stroke-width="3" opacity="0.45">
+      <path d="M136 178 V330 M176 178 V330 M216 178 V330 M256 178 V330 M296 178 V330 M336 178 V330 M376 178 V330"/>
+      <path d="M104 210 H408 M104 250 H408 M104 290 H408"/>
+    </g>
+  </g>
+  <rect x="64" y="330" width="384" height="10" rx="5" fill="#ffd23f"/>
+  <!-- Ball -->
+  <circle cx="300" cy="300" r="78" fill="#f7f7f4"/>
+  <path d="M300 262 l34 25 -13 40 h-42 l-13 -40 z" fill="#1c1c1e"/>
+  <path d="M234 286 l20 -8 13 40 -16 26 -21 -6 a78 78 0 0 1 4 -52z M366 286 l-20 -8 -13 40 16 26 21 -6 a78 78 0 0 0 -4 -52z M276 370 l6 -22 h36 l6 22 a78 78 0 0 1 -48 0z M268 230 l32 -8 32 8 -2 22 -30 10 -30 -10z" fill="#1c1c1e"/>
+</svg>

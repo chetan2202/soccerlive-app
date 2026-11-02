@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0b1410" />
+    <meta name="description" content="Free 3D five-a-side soccer in your browser. Pass, shoot and tackle against the computer. Works offline." />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SoccerLive" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <title>SoccerLive</title>
+    <script type="module" crossorigin src="./assets/index-BUgDbzCr.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/three-CHu3OR4_.js">
+    <link rel="stylesheet" crossorigin href="./assets/index--5DSQukw.css">
+  <link rel="manifest" href="./manifest.webmanifest"></head>
+  <body>
+    <canvas id="game"></canvas>
+
+    <!-- In-match HUD -->
+    <div id="hud" class="hidden">
+      <div class="scorebug" aria-live="polite">
+        <div class="sb-team"><span class="sb-chip" id="sb-c0"></span><span id="sb-t0">HBC</span></div>
+        <div class="sb-score" id="sb-score">0 - 0</div>
+        <div class="sb-team"><span id="sb-t1">RHR</span><span class="sb-chip" id="sb-c1"></span></div>
+        <div class="sb-clock" id="sb-clock">0:00</div>
+      </div>
+
+      <div class="hud-buttons">
+        <button class="icon-btn" id="btn-pause" aria-label="Pause (P)" title="Pause (P)">
+          <svg viewBox="0 0 24 24"><path d="M7 5h3v14H7zM14 5h3v14h-3z" /></svg>
+        </button>
+        <button class="icon-btn" id="btn-mute" aria-label="Sound (M)" title="Sound (M)">
+          <svg viewBox="0 0 24 24" class="snd-on"><path d="M4 9h4l5-4v14l-5-4H4zM16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" /></svg>
+          <svg viewBox="0 0 24 24" class="snd-off"><path d="M4 9h4l5-4v14l-5-4H4zM17 9l5 6M22 9l-5 6" /></svg>
+        </button>
+        <button class="icon-btn" id="btn-fs" aria-label="Fullscreen (F)" title="Fullscreen (F)">
+          <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+        </button>
+      </div>
+
+      <div class="shot-info">
+        <div class="si-speed"><span id="si-kmh">&mdash;</span><small>km/h</small></div>
+        <div class="si-kind" id="si-kind">&nbsp;</div>
+      </div>
+
+      <div class="power hidden" id="power"><div class="power-fill" id="power-fill"></div></div>
+      <div class="banner" id="banner"></div>
+      <div class="hint" id="hint"></div>
+    </div>
+
+    <!-- Touch controls -->
+    <div id="touch" class="hidden">
+      <div class="stick-zone" id="stick-zone">
+        <div class="stick-base" id="stick-base"><div class="stick-knob" id="stick-knob"></div></div>
+      </div>
+      <div class="touch-buttons">
+        <button class="tbtn tbtn-switch" id="t-switch">SWITCH</button>
+        <button class="tbtn tbtn-sprint" id="t-sprint">SPRINT</button>
+        <button class="tbtn tbtn-shoot" id="t-shoot"><span class="att-only">SHOOT</span><span class="def-only">SLIDE</span></button>
+        <button class="tbtn tbtn-pass" id="t-pass"><span class="att-only">PASS</span><span class="def-only">TACKLE</span></button>
+      </div>
+    </div>
+
+    <!-- Main menu -->
+    <div id="menu" class="overlay">
+      <div class="panel menu-panel">
+        <h1 class="logo"><span>SOCCER</span><span class="accent">LIVE</span></h1>
+        <p class="tagline">Free five-a-side soccer &middot; works offline</p>
+
+        <div class="opt-row">
+          <div class="opt-group">
+            <div class="opt-label">Your team</div>
+            <select class="pick" id="pick-you"></select>
+          </div>
+          <div class="opt-group">
+            <div class="opt-label">Opponent</div>
+            <select class="pick" id="pick-cpu"></select>
+          </div>
+        </div>
+        <div class="opt-group">
+          <div class="opt-label">Opponent level</div>
+          <div class="seg" data-opt="difficulty">
+            <button data-v="easy">Easy</button>
+            <button data-v="normal">Normal</button>
+            <button data-v="hard">Hard</button>
+            <button data-v="legend">Legend</button>
+          </div>
+        </div>
+        <div class="opt-group">
+          <div class="opt-label">Match length</div>
+          <div class="seg" data-opt="minutes">
+            <button data-v="3">2 &times; 3 min</button>
+            <button data-v="5">2 &times; 5 min</button>
+            <button data-v="8">2 &times; 8 min</button>
+          </div>
+        </div>
+
+        <button class="cta" id="btn-play">PLAY</button>
+        <div class="menu-links">
+          <button class="link" id="btn-help">How to play</button>
+          <button class="link hidden" id="btn-install">Install app</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to play -->
+    <div id="help" class="overlay hidden">
+      <div class="panel help-panel">
+        <h2>How to play</h2>
+        <div class="help-grid">
+          <div>
+            <h3>With the ball</h3>
+            <table>
+              <tr><td>Arrows / WASD</td><td>Run and dribble</td></tr>
+              <tr><td>Shift</td><td>Sprint (the ball runs further ahead: easier to lose)</td></tr>
+              <tr><td>Space</td><td>Pass to the team-mate in the direction you point (no direction: the way you face)</td></tr>
+              <tr><td>E (hold)</td><td>Shoot: hold for power, release to strike. Up / down aims at the far or near side of the goal</td></tr>
+            </table>
+          </div>
+          <div>
+            <h3>Without the ball</h3>
+            <table>
+              <tr><td>Space</td><td>Standing tackle (get close to the ball first)</td></tr>
+              <tr><td>E</td><td>Slide tackle in the direction you point. Miss the ball and take the man: a foul</td></tr>
+              <tr><td>Q</td><td>Switch to the team-mate best placed for the ball</td></tr>
+            </table>
+          </div>
+          <div>
+            <h3>Rules</h3>
+            <table>
+              <tr><td>Team</td><td>Five a side: a keeper and four outfield players. No offside.</td></tr>
+              <tr><td>Restarts</td><td>Kick-ins from the touchline, corners, goal throws by the keeper</td></tr>
+              <tr><td>Fouls</td><td>A free kick; in the penalty area, a penalty</td></tr>
+              <tr><td>Set pieces</td><td>Space to pass, E to shoot (free kicks and penalties)</td></tr>
+            </table>
+          </div>
+        </div>
+        <button class="cta small" id="btn-help-close">Got it</button>
+      </div>
+    </div>
+
+    <!-- Pause -->
+    <div id="pause" class="overlay hidden">
+      <div class="panel small-panel">
+        <h2>Paused</h2>
+        <button class="cta" id="btn-resume">Resume</button>
+        <button class="ghost" id="btn-restart">Restart match</button>
+        <button class="ghost" id="btn-quit">Main menu</button>
+      </div>
+    </div>
+
+    <!-- Match over -->
+    <div id="over" class="overlay hidden">
+      <div class="panel small-panel wide-panel">
+        <div class="over-kicker">Full time</div>
+        <h2 id="over-title">Victory</h2>
+        <div class="over-score" id="over-score"></div>
+        <div class="scorers" id="over-scorers"></div>
+        <table class="stats" id="over-stats"></table>
+        <button class="cta" id="btn-again">Play again</button>
+        <button class="ghost" id="btn-menu">Main menu</button>
+      </div>
+    </div>
+
+    <div id="rotate" class="hidden"><div>Turn your phone sideways for the best view<button class="link" id="btn-rotate-ok">Play anyway</button></div></div>
+    <div id="toast" class="toast hidden"></div>
+
+  </body>
+</html>
